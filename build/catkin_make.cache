@@ -1,0 +1,2 @@
+cv_camera:robot_nav
+-DCATKIN_DEVEL_PREFIX=/home/nhathai/ros_ws/devel -DCMAKE_INSTALL_PREFIX=/home/nhathai/ros_ws/install -G Unix Makefiles

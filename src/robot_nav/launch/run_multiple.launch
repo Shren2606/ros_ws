@@ -1,0 +1,16 @@
+<!-- File: run_multiple.launch -->
+
+<launch>
+
+    <!-- Chạy launch file cho lidar và robot -->
+     <include file="$(find robot_nav)/launch/my_cv_camera_launch.launch"/>
+
+    <!-- Chạy launch file kiểm tra lidar -->
+    
+
+    <!-- Chạy launch file cho hector_slam -->
+    <include file="$(find hector_slam_launch)/launch/tutorial.launch"/>
+
+   
+
+</launch>
