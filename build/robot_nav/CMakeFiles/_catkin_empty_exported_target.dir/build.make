@@ -43,10 +43,10 @@ RM = /usr/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /home/thien/ros_ws/src
+CMAKE_SOURCE_DIR = /home/nhathai/ros_ws/src
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /home/thien/ros_ws/build
+CMAKE_BINARY_DIR = /home/nhathai/ros_ws/build
 
 # Utility rule file for _catkin_empty_exported_target.
 
@@ -63,10 +63,10 @@ robot_nav/CMakeFiles/_catkin_empty_exported_target.dir/build: _catkin_empty_expo
 .PHONY : robot_nav/CMakeFiles/_catkin_empty_exported_target.dir/build
 
 robot_nav/CMakeFiles/_catkin_empty_exported_target.dir/clean:
-	cd /home/thien/ros_ws/build/robot_nav && $(CMAKE_COMMAND) -P CMakeFiles/_catkin_empty_exported_target.dir/cmake_clean.cmake
+	cd /home/nhathai/ros_ws/build/robot_nav && $(CMAKE_COMMAND) -P CMakeFiles/_catkin_empty_exported_target.dir/cmake_clean.cmake
 .PHONY : robot_nav/CMakeFiles/_catkin_empty_exported_target.dir/clean
 
 robot_nav/CMakeFiles/_catkin_empty_exported_target.dir/depend:
-	cd /home/thien/ros_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/thien/ros_ws/src /home/thien/ros_ws/src/robot_nav /home/thien/ros_ws/build /home/thien/ros_ws/build/robot_nav /home/thien/ros_ws/build/robot_nav/CMakeFiles/_catkin_empty_exported_target.dir/DependInfo.cmake --color=$(COLOR)
+	cd /home/nhathai/ros_ws/build && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /home/nhathai/ros_ws/src /home/nhathai/ros_ws/src/robot_nav /home/nhathai/ros_ws/build /home/nhathai/ros_ws/build/robot_nav /home/nhathai/ros_ws/build/robot_nav/CMakeFiles/_catkin_empty_exported_target.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : robot_nav/CMakeFiles/_catkin_empty_exported_target.dir/depend
 

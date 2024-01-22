@@ -50,7 +50,7 @@ def detect_person(image):
                     (startX, startY, endX, endY) = person_box.astype("int")
                     saved_frame = image[startY:endY, startX:endX]
                     
-                    cv2.imwrite(f'/home/thien/ros_ws/data/frame_template.jpg', saved_frame)
+                    cv2.imwrite(f'/home/nhathai/ros_ws/data/frame_template.jpg', saved_frame)
                     status = True
     except Exception as e:
         print(e)
@@ -84,7 +84,7 @@ def follow(image,depth_frame):
         pub = rospy.Publisher("cmd_vel", Twist, queue_size=1)
         
        
-        template = cv2.imread('/home/thien/ros_ws/data/frame_template.jpg')
+        template = cv2.imread('/home/nhathai/ros_ws/data/frame_template.jpg')
         #template = imutils.resize(template, width=300)
         
 
@@ -108,7 +108,7 @@ def follow(image,depth_frame):
             angular=(setpoint-tâm_x)*150/640
             # Vẽ hộp giới hạn xung quanh vật
 
-            distance = depth_frame.get_distance(tâm_x, tâm_y) 
+            distance = depth_frame.get_distance(tâm_x, tâm_y) - 0.6
 
             # Áp dụng bộ lọc Kalman
             x_hat_result, x_hat_prev, sigma_x_hat_prev = kalman_filter(x_hat_prev, sigma_x_hat_prev, distance , sigma_v, sigma_w)
@@ -121,20 +121,20 @@ def follow(image,depth_frame):
             tan_goc = math.tan(goc_radian)
 
                 # Tính cạnh còn lại của tam giác
-            canh_con_lai = (x_hat_result-0.6) * tan_goc
+            canh_con_lai = (x_hat_result) * tan_goc
 
             
             cv2.rectangle(image, top_left, bottom_right, (0, 255, 0), 2)
             cv2.circle(image, (tâm_x, tâm_y), 5, (255, 255, 0), -1)
-            cv2.putText(image, "{:.2f}KF".format(x_hat_result-0.6), (tâm_x, tâm_y - 20),
+            cv2.putText(image, "{:.2f}KF".format(x_hat_result), (tâm_x, tâm_y - 20),
                     cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 0), 2)
-            cv2.putText(image, "{:.2f}m".format(distance-0.6), (tâm_x-150, tâm_y - 20),
+            cv2.putText(image, "{:.2f}m".format(distance), (tâm_x-150, tâm_y - 20),
                     cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 0), 2)
             
             
             # Tạo message HumanPositionMsg và gán giá trị x, y
             human_position_msg = Point()
-            human_position_msg.x =x_hat_result-0.6
+            human_position_msg.x =x_hat_result
             human_position_msg.y = canh_con_lai
             human_position_msg.z = angular
 
@@ -146,7 +146,7 @@ def follow(image,depth_frame):
             twist_msg.angular.z = angular
             twist_msg.linear.x=5000
 
-            pub.publish(twist_msg)
+            #pub.publish(twist_msg)
             
         else:
             angular = 0
@@ -184,8 +184,8 @@ def realsense_node():
             depth_image = np.asanyarray(depth_frame.get_data())
             color_image = np.asanyarray(color_frame.get_data())
 
-            """if status is False:  # Nếu chưa phát hiện người, tiếp tục xử lý hình ảnh
-                detect_person(color_image)"""
+            if status is True:  # Nếu chưa phát hiện người, tiếp tục xử lý hình ảnh
+                detect_person(color_image)
             if status is False:
                 follow(color_image,depth_frame)
                 
@@ -202,8 +202,8 @@ def realsense_node():
 
 if __name__ == '__main__':
     try:
-        prototxt_path = "/home/thien/ros_ws/model/MobileNetSSD_deploy.prototxt"
-        model_path = "/home/thien/ros_ws/model/MobileNetSSD_deploy.caffemodel"
+        prototxt_path = "/home/nhathai/ros_ws/model/MobileNetSSD_deploy.prototxt"
+        model_path = "/home/nhathai/ros_ws/model/MobileNetSSD_deploy.caffemodel"
         CLASSES = ["background", "aeroplane", "bicycle", "bird", "boat",
            "bottle", "bus", "car", "cat", "chair", "cow", "diningtable",
            "dog", "horse", "motorbike", "person"]

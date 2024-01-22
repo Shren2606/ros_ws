@@ -1,4 +1,4 @@
-prefix=/home/thien/ros_ws/install
+prefix=/home/nhathai/ros_ws/install
 
 Name: robot_nav
 Description: Description of robot_nav
