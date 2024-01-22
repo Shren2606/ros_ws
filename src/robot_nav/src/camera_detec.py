@@ -11,6 +11,7 @@ from geometry_msgs.msg import Twist,Point
 import imutils
 import math
 
+import random
 
 
 counter = 0
@@ -19,8 +20,9 @@ status = False  # Sử dụng cờ để theo dõi việc phát hiện
 # Thử nghiệm với một số giá trị đầu vào
 x_hat_prev = 0  # Trạng thái ước lượng trước đó
 sigma_x_hat_prev = 1  # Độ lệch chuẩn của trạng thái ước lượng trước đó
-z = 2  # Đo lường tại thời điểm hiện tại
-sigma_v = 0.1  # Độ lệch chuẩn của nhiễu đo lường
+
+z = 0  # Đo lường tại thời điểm hiện tại
+sigma_v = 0.01  # Độ lệch chuẩn của nhiễu đo lường
 sigma_w = 0.1  # Độ lệch chuẩn của nhiễu quá trình
 
 def detect_person(image):
@@ -54,24 +56,28 @@ def detect_person(image):
         print(e)
 
 
+
 def kalman_filter(x_hat_prev, sigma_x_hat_prev, z, sigma_v, sigma_w):
+   
     # Bước Dự Báo
-    # Cập nhật trạng thái dự đoán
-    x_hat_pred = x_hat_prev
     
     # Cập nhật độ lệch chuẩn của trạng thái dự đoán
-    sigma_x_hat_pred = sigma_x_hat_prev + sigma_v + 1/sigma_w
+    A = 1/(sigma_x_hat_prev + sigma_v) + 1/sigma_w
+    sigma_x_hat_pred = 1/A
     
     # Hệ số Kalman
-    K = sigma_x_hat_prev / (sigma_x_hat_prev + sigma_w)
+    K = sigma_x_hat_pred /sigma_w
     
     # Bước Dự Báo - Cập nhật trạng thái dự đoán và độ lệch chuẩn của nó
-    x_hat = x_hat_pred + K * (z - x_hat_pred)
-    sigma_x_hat = (1 - K) * sigma_x_hat_pred
-    
-    return x_hat, sigma_x_hat
+    x_hat = x_hat_prev + K * (z - x_hat_prev)
+
+    x_hat_prev = x_hat 
+    sigma_x_hat_prev = sigma_x_hat_pred
+    return x_hat, x_hat_prev, sigma_x_hat_prev
 
 def follow(image,depth_frame):
+    global x_hat_prev
+    global sigma_x_hat_prev
     try :
         
         pub_point = rospy.Publisher("/human_position_topic",Point,queue_size=1)
@@ -102,11 +108,11 @@ def follow(image,depth_frame):
             angular=(setpoint-tâm_x)*150/640
             # Vẽ hộp giới hạn xung quanh vật
 
-            distance = depth_frame.get_distance(tâm_x, tâm_y)
+            distance = depth_frame.get_distance(tâm_x, tâm_y) 
 
             # Áp dụng bộ lọc Kalman
-            x_hat_result, sigma_x_hat_result = kalman_filter(x_hat_prev, sigma_x_hat_prev, distance , sigma_v, sigma_w)
-
+            x_hat_result, x_hat_prev, sigma_x_hat_prev = kalman_filter(x_hat_prev, sigma_x_hat_prev, distance , sigma_v, sigma_w)
+            
             # Gửi thông tin vị trí của người lên topic
             # Chuyển đổi độ sang radian
             goc_radian = math.radians(angular)
@@ -120,9 +126,9 @@ def follow(image,depth_frame):
             
             cv2.rectangle(image, top_left, bottom_right, (0, 255, 0), 2)
             cv2.circle(image, (tâm_x, tâm_y), 5, (255, 255, 0), -1)
-            cv2.putText(image, "{:.2f}m".format(x_hat_result-0.6), (tâm_x, tâm_y - 20),
+            cv2.putText(image, "{:.2f}KF".format(x_hat_result-0.6), (tâm_x, tâm_y - 20),
                     cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 0), 2)
-            cv2.putText(image, "{:.2f}m".format(distance -0.6), (tâm_x-100, tâm_y - 20),
+            cv2.putText(image, "{:.2f}m".format(distance-0.6), (tâm_x-150, tâm_y - 20),
                     cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 0), 2)
             
             
@@ -178,8 +184,8 @@ def realsense_node():
             depth_image = np.asanyarray(depth_frame.get_data())
             color_image = np.asanyarray(color_frame.get_data())
 
-            #if status is False:  # Nếu chưa phát hiện người, tiếp tục xử lý hình ảnh
-                #detect_person(color_image)
+            """if status is False:  # Nếu chưa phát hiện người, tiếp tục xử lý hình ảnh
+                detect_person(color_image)"""
             if status is False:
                 follow(color_image,depth_frame)
                 
@@ -203,6 +209,7 @@ if __name__ == '__main__':
            "dog", "horse", "motorbike", "person"]
 
         detector = cv2.dnn.readNetFromCaffe(prototxt_path, model_path)
+        
         
         realsense_node()
     except rospy.ROSInterruptException:
