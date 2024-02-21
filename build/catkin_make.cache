@@ -1,2 +1,2 @@
-robot_nav
+robot_nav:rplidar_ros
 -DCATKIN_DEVEL_PREFIX=/home/nhathai/ros_ws/devel -DCMAKE_INSTALL_PREFIX=/home/nhathai/ros_ws/install -G Unix Makefiles

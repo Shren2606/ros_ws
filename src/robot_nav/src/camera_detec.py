@@ -100,7 +100,7 @@ def follow(image,depth_frame):
         _, max_val, _, max_loc  = cv2.minMaxLoc(result)
         w, h = template.shape[1], template.shape[0]
         top_left = max_loc
-        if max_val > 0.6:
+        if max_val > 0.7:
             bottom_right = (top_left[0] + w, top_left[1] + h)
             tâm_x = (top_left[0] + bottom_right[0]) // 2
             tâm_y = (top_left[1] + bottom_right[1]) // 2
@@ -108,7 +108,7 @@ def follow(image,depth_frame):
             angular=(setpoint-tâm_x)*150/640
             # Vẽ hộp giới hạn xung quanh vật
 
-            distance = depth_frame.get_distance(tâm_x, tâm_y) - 0.6
+            distance = depth_frame.get_distance(tâm_x, tâm_y)  - 0.6
 
             # Áp dụng bộ lọc Kalman
             x_hat_result, x_hat_prev, sigma_x_hat_prev = kalman_filter(x_hat_prev, sigma_x_hat_prev, distance , sigma_v, sigma_w)
@@ -126,7 +126,7 @@ def follow(image,depth_frame):
             
             cv2.rectangle(image, top_left, bottom_right, (0, 255, 0), 2)
             cv2.circle(image, (tâm_x, tâm_y), 5, (255, 255, 0), -1)
-            cv2.putText(image, "{:.2f}KF".format(x_hat_result), (tâm_x, tâm_y - 20),
+            cv2.putText(image, "{:.2f}KF".format(x_hat_result ), (tâm_x, tâm_y - 20),
                     cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 0), 2)
             cv2.putText(image, "{:.2f}m".format(distance), (tâm_x-150, tâm_y - 20),
                     cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 0), 2)
@@ -184,9 +184,9 @@ def realsense_node():
             depth_image = np.asanyarray(depth_frame.get_data())
             color_image = np.asanyarray(color_frame.get_data())
 
-            if status is True:  # Nếu chưa phát hiện người, tiếp tục xử lý hình ảnh
+            if status is False:  # Nếu chưa phát hiện người, tiếp tục xử lý hình ảnh
                 detect_person(color_image)
-            if status is False:
+            if status is True:
                 follow(color_image,depth_frame)
                 
 

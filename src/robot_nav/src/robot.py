@@ -128,11 +128,11 @@ def plot_lidar_data():
     
     lower_limit = -90
     upper_limit = 90
-    limited_angular_z = max(min(angular, upper_limit), lower_limit)
+    limited_angular_z = max(min(-angular, upper_limit), lower_limit)
 
     twist_msg.angular.z = limited_angular_z 
     twist_msg.linear.x=5000
-    if Rg < 1 :
+    if Rg < 1.0 :
         twist_msg.angular.z = 0
         twist_msg.linear.x=0
         Fx_total = 0

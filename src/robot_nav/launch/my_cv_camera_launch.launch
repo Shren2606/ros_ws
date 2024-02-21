@@ -15,8 +15,7 @@
     <node name="serial_node" pkg="rosserial_python" type="serial_node.py">
         <param name="port" type="string" value="/dev/usb_serial_hl340" /><!--Arduino Mega -->
         <param name="baud" type="int" value="115200" />
-        <param name="port" type="string" value="/dev/ttyACM0" /><!--Arduino Nano -->
-        <param name="baud" type="int" value="9600" />
+        
     </node>
 
 </launch>
